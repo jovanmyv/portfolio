@@ -170,7 +170,7 @@ export default function Page() {
                 >
                   WhatsApp
                 </Link>{" "}
-                and&apos;I'm waiting for you now.
+                and I&apos;m waiting for you now. 
               </p>
             </div>
           </BlurFade>

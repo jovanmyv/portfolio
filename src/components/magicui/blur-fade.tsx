@@ -1,7 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useInView, Variants } from "framer-motion";
-import { useRef } from "react";
+import { AnimatePresence, motion, Variants } from "framer-motion";
+import { useInView } from "react-intersection-observer"; 
+import { useRef } from "react"; 
 
 interface BlurFadeProps {
   children: React.ReactNode;
@@ -14,7 +15,7 @@ interface BlurFadeProps {
   delay?: number;
   yOffset?: number;
   inView?: boolean;
-  inViewMargin?: string;
+  rootMargin?: string; 
   blur?: string;
 }
 const BlurFade = ({
@@ -25,21 +26,26 @@ const BlurFade = ({
   delay = 0,
   yOffset = 6,
   inView = false,
-  inViewMargin = "-50px",
+  rootMargin = "-50px 0px 0px 0px", 
   blur = "6px",
 }: BlurFadeProps) => {
-  const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
+  
+  // PERBAIKAN: useInView hanya menerima SATU argumen (opsi) dan mengembalikan ref.
+  const { ref, inView: inViewResult } = useInView({ 
+    triggerOnce: true, // <-- INI PERBAIKANNYA: Ganti 'once' menjadi 'triggerOnce'
+    rootMargin: rootMargin 
+  }); 
+
   const isInView = !inView || inViewResult;
   const defaultVariants: Variants = {
     hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
-    visible: { y: -yOffset, opacity: 1, filter: `blur(0px)` },
+    visible: { y: 0, opacity: 1, filter: `blur(0px)` },
   };
   const combinedVariants = variant || defaultVariants;
   return (
     <AnimatePresence>
       <motion.div
-        ref={ref}
+        ref={ref} 
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         exit="hidden"
